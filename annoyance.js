@@ -8,7 +8,7 @@
 // @grant        GM_addStyle
 // @run-at       document-idle
 // ==/UserScript==
-
+ 
 (() => {
     if (window.top !== window.self) return;
     if (document.getElementById("web-chaos-panel")) return;
@@ -25,12 +25,13 @@
     <div class="wc-status">SYSTEM STABLE</div>
 
     <label>Chaos level
-        <select id="wc-level">
-            <option value="1">Mild</option>
-            <option value="2" selected>Unstable</option>
-            <option value="3">Severe</option>
-            <option value="4">Total Chaos</option>
-        </label>
+    <select id="wc-level">
+        <option value="1">Mild</option>
+        <option value="2" selected>Unstable</option>
+        <option value="3">Severe</option>
+        <option value="4">Total Chaos</option>
+    </select>
+</label>
 
     <div class="wc-selection-title">
         EFFECT SELECTION
@@ -358,6 +359,41 @@
 
 .wc-toggle input {
     accent-color: #00ff9c;
+}
+    /* CATEGORY GROUPS */
+
+.wc-effect-category {
+    margin-bottom: 6px;
+    border: 1px solid #333;
+    background: #090909;
+}
+
+.wc-effect-category summary {
+    cursor: pointer;
+    padding: 8px;
+    color: #00ff9c;
+    font: bold 11px monospace;
+    background: #151515;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.wc-effect-category summary:hover {
+    background: #242424;
+    color: white;
+}
+
+.wc-effect-category[open] summary {
+    border-bottom: 1px solid #333;
+}
+
+.wc-category-effects {
+    padding: 3px;
+
+}
+
+.wc-effect-category summary::marker {
+    color: #ff0033;
 }
     `);
 
@@ -749,9 +785,9 @@ function startCorruption() {
         setTimeout(() => {
             corruptionStage++;
 
-            const available = effects.filter(effect =>
-                corruptionEffects.includes(effect.name)
-            );
+            const available = getEnabledEffects().filter(effect =>
+    corruptionEffects.includes(effect.name)
+);
 
             const chosen = [];
 
@@ -881,34 +917,120 @@ function startLivingChaos() {
 
 const effectList = document.getElementById("wc-effect-list");
 
-effects.forEach((effect, index) => {
-    const label = document.createElement("label");
-    label.className = "wc-effect-option";
+const categories = {
+    "VISUAL DISTORTION": [
+        "COLOR INVERSION",
+        "GRAYSCALE",
+        "HYPERSATURATION",
+        "HUE COLLAPSE",
+        "DEEP FRIED",
+        "BLUR",
+        "LOW QUALITY REALITY"
+    ],
 
-    label.innerHTML = `
-        <input type="checkbox" checked data-effect-index="${index}">
-        <span>${effect.name}</span>
-    `;
+    "TYPOGRAPHY": [
+        "TYPOGRAPHIC CHAOS",
+        "FONT DISASTER",
+        "TEXT SHADOW",
+        "REVERSE READING",
+        "AFTERIMAGE"
+    ],
 
-    effectList.appendChild(label);
+    "MOTION & ANIMATION": [
+        "EARTHQUAKE",
+        "RAINBOW",
+        "PULSE",
+        "FLOAT",
+        "WOBBLE",
+        "GLITCH",
+        "BLINK",
+        "SPIN",
+        "TILT",
+        "SKEW"
+    ],
+
+    "LAYOUT DISASTER": [
+        "BIG MODE",
+        "TINY MODE",
+        "MISALIGNMENT",
+        "GRAVITY",
+        "MIRROR WORLD",
+        "SPACING MELTDOWN",
+        "BORDER EXPLOSION",
+        "RANDOM SIZING",
+        "RANDOM ALIGNMENT",
+        "WINDOW PANIC"
+    ],
+
+    "SCREEN EFFECTS": [
+        "SCANLINES",
+        "SCREEN FLASH",
+        "OUTLINE EVERYTHING",
+        "ELEMENT DISAPPEARANCE"
+    ]
+};
+
+// Create category groups
+Object.entries(categories).forEach(([category, names]) => {
+    const group = document.createElement("details");
+    group.className = "wc-effect-category";
+    group.open = true;
+
+    const heading = document.createElement("summary");
+    heading.textContent = category;
+    group.appendChild(heading);
+
+    const list = document.createElement("div");
+    list.className = "wc-category-effects";
+
+    names.forEach(name => {
+        const index = effects.findIndex(effect => effect.name === name);
+
+        if (index === -1) {
+            console.warn("[WEB CHAOS] Missing effect:", name);
+            return;
+        }
+
+        const label = document.createElement("label");
+        label.className = "wc-effect-option";
+
+        label.innerHTML = `
+            <input type="checkbox" checked data-effect-index="${index}">
+            <span>${name}</span>
+        `;
+
+        list.appendChild(label);
+    });
+
+    group.appendChild(list);
+    effectList.appendChild(group);
 });
 
+// Get enabled effects
 function getEnabledEffects() {
     const checkboxes = [
         ...effectList.querySelectorAll("input[type=checkbox]")
     ];
 
     return effects.filter((effect, index) =>
-        checkboxes[index]?.checked
+        checkboxes.some(cb =>
+            Number(cb.dataset.effectIndex) === index && cb.checked
+        )
     );
 }
 
+// Select ALL
 document.getElementById("wc-all").onclick = () => {
-    effectList.querySelectorAll("input").forEach(cb => cb.checked = true);
+    effectList.querySelectorAll("input").forEach(cb => {
+        cb.checked = true;
+    });
 };
 
+// Select NONE
 document.getElementById("wc-none").onclick = () => {
-    effectList.querySelectorAll("input").forEach(cb => cb.checked = false);
+    effectList.querySelectorAll("input").forEach(cb => {
+        cb.checked = false;
+    });
 };
 
     const criticalFailure = () => {
@@ -938,8 +1060,15 @@ document.getElementById("wc-none").onclick = () => {
             4: 15
         }[level];
 
-        const shuffled = [...effects].sort(() => Math.random() - .5);
-        const selected = shuffled.slice(0, amount);
+        const enabledEffects = getEnabledEffects();
+
+if (enabledEffects.length === 0) {
+    alert("Select at least one chaos effect.");
+    return;
+}
+
+const shuffled = [...enabledEffects].sort(() => Math.random() - .5);
+const selected = shuffled.slice(0, Math.min(amount, shuffled.length));
 
         // Rare event: critical failure
         const critical = Math.random() < .04;
@@ -973,4 +1102,6 @@ startCorruption();
     });
    
 })();
-  
+   /*<Line For Debug>*/
+
+
