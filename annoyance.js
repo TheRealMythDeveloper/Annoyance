@@ -1114,7 +1114,69 @@ function getEnabledEffects() {
         )
     );
 }
+// CHAOS PRESET SYSTEM
 
+const presetSelect = document.getElementById("wc-preset");
+
+const presets = {
+    GLITCHCORE: [
+        "GLITCH", "SCANLINES", "TYPOGRAPHIC CHAOS",
+        "HUE COLLAPSE", "AFTERIMAGE", "RAINBOW",
+        "TEXT SHADOW"
+    ],
+
+    NIGHTMARE: [
+        "BLUR", "GRAYSCALE", "LOW QUALITY REALITY",
+        "MISALIGNMENT", "MIRROR WORLD", "FONT DISASTER",
+        "ELEMENT DISAPPEARANCE", "SPIN", "TILT"
+    ],
+
+    BROKEN: [
+        "GLITCH", "WINDOW PANIC", "RANDOM SIZING",
+        "SPACING MELTDOWN", "SCANLINES", "BLINK",
+        "TYPOGRAPHIC CHAOS", "SCREEN FLASH",
+        "BORDER EXPLOSION"
+    ],
+
+    MINIMAL: [
+        "TEXT SHADOW", "FLOAT", "PULSE", "RAINBOW"
+    ],
+
+    TOTAL: effects.map(effect => effect.name)
+};
+
+let applyingPreset = false;
+
+function applyPreset(name) {
+    const selectedNames = presets[name];
+    if (!selectedNames) return;
+
+    applyingPreset = true;
+
+    effectList.querySelectorAll("input[data-effect-index]")
+        .forEach(cb => {
+            const effect = effects[Number(cb.dataset.effectIndex)];
+            cb.checked = selectedNames.includes(effect.name);
+            cb.dispatchEvent(new Event("change"));
+        });
+
+    applyingPreset = false;
+}
+
+effectList.addEventListener("change", event => {
+    if (
+        !applyingPreset &&
+        event.target.matches("input[data-effect-index]")
+    ) {
+        presetSelect.value = "CUSTOM";
+    }
+});
+
+presetSelect.addEventListener("change", () => {
+    if (presetSelect.value !== "CUSTOM") {
+        applyPreset(presetSelect.value);
+    }
+});
 // SELECT ALL
 document.getElementById("wc-all").onclick = () => {
     effectList.querySelectorAll("input").forEach(cb => {
