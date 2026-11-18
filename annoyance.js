@@ -12,7 +12,6 @@
 (() => {
     if (window.top !== window.self) return;
     if (document.getElementById("web-chaos-panel")) return;
-
     const panel = document.createElement("div");
     panel.id = "web-chaos-panel";
 
@@ -235,13 +234,12 @@
             to { transform: translateY(10px); }
         }
 
-        #wc-chaos-overlay {
+        .wc-chaos-overlay {
             position: fixed;
             inset: 0;
             pointer-events: none;
             z-index: 2147483000;
         }
-
         .wc-scanlines {
             background: repeating-linear-gradient(
                 to bottom,
@@ -250,12 +248,12 @@
                 rgba(0,0,0,.25) 4px
             );
         }
-
+  asd
         .wc-flash {
             background: rgba(255,0,0,.08);
             animation: wc-blink .2s infinite;
         }
-
+  
         .wc-error-overlay {
             position: fixed;
             inset: 0;
@@ -455,12 +453,11 @@
         );
 
     const addOverlay = (className = "") => {
-        const overlay = document.createElement("div");
-        overlay.id = "wc-chaos-overlay";
-        overlay.className = className;
-        document.body.appendChild(overlay);
-        return overlay;
-    };
+    const overlay = document.createElement("div");
+    overlay.className = `wc-chaos-overlay ${className}`.trim();
+    document.body.appendChild(overlay);
+    return overlay;
+};
 
     const effects = [
         {
@@ -1083,21 +1080,20 @@ Object.entries(categories).forEach(([category, names]) => {
     }
 
     toggle.addEventListener("click", event => {
-        event.preventDefault();
-        event.stopPropagation();
+    event.preventDefault();
+    event.stopPropagation();
 
-        const allEnabled = checkboxes.every(cb => cb.checked);
-
-        checkboxes.forEach(cb => {
-            cb.checked = !allEnabled;
-        });
-
-        updateCount();
-    });
+    const allEnabled = checkboxes.every(cb => cb.checked);
 
     checkboxes.forEach(cb => {
-        cb.addEventListener("change", updateCount);
+        cb.checked = !allEnabled;
+        cb.dispatchEvent(new Event("change"));
     });
+});
+
+checkboxes.forEach(cb => {
+    cb.addEventListener("change", updateCount);
+});
 
     updateCount();
 });
@@ -1249,8 +1245,15 @@ const selected = shuffled.slice(0, Math.min(amount, shuffled.length));
             criticalFailure();
             console.warn("WEB CHAOS: CRITICAL FAILURE");
         }
-// Begin progressive corruption
-startCorruption();
+// START OPTIONAL CHAOS SYSTEMS
+
+if (document.getElementById("wc-progressive").checked) {
+    startCorruption();
+}
+
+if (document.getElementById("wc-living").checked) {
+    startLivingChaos();
+}
 
         console.log(
             "WEB CHAOS ACTIVATED:",
