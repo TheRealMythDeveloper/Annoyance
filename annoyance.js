@@ -1200,5 +1200,3 @@ startCorruption();
     });
    
 })();
-
-
