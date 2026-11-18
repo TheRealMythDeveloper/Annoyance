@@ -16,29 +16,48 @@
     const panel = document.createElement("div");
     panel.id = "web-chaos-panel";
 
-    panel.innerHTML = `
-        <div class="wc-header">
-            <span>⚠ WEB CHAOS</span>
-            <span class="wc-version">v2.0</span>
-        </div>
+  panel.innerHTML = `
+    <div class="wc-header">
+        <span>⚠ WEB CHAOS</span>
+        <span class="wc-version">v3.0</span>
+    </div>
 
-        <div class="wc-status">SYSTEM STABLE</div>
+    <div class="wc-status">SYSTEM STABLE</div>
 
-        <label>Chaos level
-            <select id="wc-level">
-                <option value="1">Mild</option>
-                <option value="2" selected>Unstable</option>
-                <option value="3">Severe</option>
-                <option value="4">TOTAL CHAOS</option>
-            </select>
+    <label>Chaos level
+        <select id="wc-level">
+            <option value="1">Mild</option>
+            <option value="2" selected>Unstable</option>
+            <option value="3">Severe</option>
+            <option value="4">Total Chaos</option>
         </label>
 
-        <button id="wc-trigger">INJECT CHAOS</button>
-
-        <div class="wc-footer">
-            NO UNDO AVAILABLE
+    <div class="wc-selection-title">
+        EFFECT SELECTION
+        <div class="wc-select-buttons">
+            <button id="wc-all">ALL</button>
+            <button id="wc-none">NONE</button>
         </div>
-    `;
+    </div>
+
+    <div id="wc-effect-list"></div>
+
+    <label class="wc-toggle">
+        <input type="checkbox" id="wc-progressive" checked>
+        Progressive corruption
+    </label>
+
+    <label class="wc-toggle">
+        <input type="checkbox" id="wc-living" checked>
+        Living chaos
+    </label>
+
+    <button id="wc-trigger">INJECT CHAOS</button>
+
+    <div class="wc-footer">
+        NO UNDO AVAILABLE
+    </div>
+`;
 
     document.body.appendChild(panel);
 
@@ -240,6 +259,106 @@
             text-shadow: 3px 3px black;
             transform: rotate(-8deg);
         }
+            /* FLOATING CORRUPTION */
+
+.wc-floating-message {
+    position: fixed !important;
+    z-index: 2147483001 !important;
+    pointer-events: none !important;
+    font: bold 13px monospace !important;
+    color: #ff3333 !important;
+    text-shadow: 2px 2px black !important;
+    animation: wc-message-in 0.25s ease-out;
+}
+
+@keyframes wc-message-in {
+    from {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.wc-corrupt-fragment {
+    position: fixed !important;
+    pointer-events: none !important;
+    z-index: 2147483000 !important;
+    background: #ff003344 !important;
+    border: 1px solid #ff0033 !important;
+    animation: wc-fragment 0.3s steps(2) infinite;
+}
+
+@keyframes wc-fragment {
+    0% { transform: translate(0,0); }
+    50% { transform: translate(4px,-3px); }
+    100% { transform: translate(-3px,3px); }
+}
+
+/* EFFECT SELECTOR */
+
+#wc-effect-list {
+    max-height: 220px;
+    overflow-y: auto;
+    margin: 8px 0;
+    padding: 5px;
+    background: #111;
+    border: 1px solid #333;
+}
+
+.wc-effect-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px;
+    color: #ddd;
+    font: 11px monospace;
+}
+
+.wc-effect-option:hover {
+    background: #222;
+    color: #00ff9c;
+}
+
+.wc-effect-option input {
+    accent-color: #00ff9c;
+}
+
+.wc-selection-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+.wc-select-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.wc-select-buttons button {
+    background: #222;
+    color: #00ff9c;
+    border: 1px solid #00ff9c;
+    padding: 4px 6px;
+    font: 10px monospace;
+    cursor: pointer;
+}
+
+.wc-toggle {
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0 !important;
+    font-size: 11px;
+}
+
+.wc-toggle input {
+    accent-color: #00ff9c;
+}
     `);
 
     const random = (min, max) =>
@@ -663,6 +782,135 @@ function startCorruption() {
         }, stage.delay);
     });
 }
+
+// LIVING CHAOS ENGINE
+
+const chaosMessages = [
+    "SIGNAL LOST",
+    "WHY IS THIS HAPPENING",
+    "ERROR 0x0000",
+    "REALITY NOT FOUND",
+    "CONNECTION UNSTABLE",
+    "DO NOT TRUST THE DISPLAY",
+    "SYSTEM BREACH",
+    "WHO MOVED THAT",
+    "MEMORY CORRUPTED",
+    "RECALCULATING...",
+    "???",
+    "PLEASE WAIT",
+    "UNEXPECTED BEHAVIOR",
+    "NOTHING IS WRONG",
+    "ARE YOU STILL THERE?"
+];
+
+function createChaosMessage() {
+    const msg = document.createElement("div");
+    msg.className = "wc-floating-message";
+    msg.textContent = pick(chaosMessages);
+
+    msg.style.left = random(5, 85) + "vw";
+    msg.style.top = random(5, 85) + "vh";
+    msg.style.fontSize = random(12, 26) + "px";
+    msg.style.opacity = random(50, 100) / 100;
+
+    document.body.appendChild(msg);
+
+    setTimeout(() => msg.remove(), random(1200, 4000));
+}
+
+function createFragment() {
+    const fragment = document.createElement("div");
+    fragment.className = "wc-corrupt-fragment";
+
+    fragment.style.left = random(0, 95) + "vw";
+    fragment.style.top = random(0, 95) + "vh";
+    fragment.style.width = random(20, 180) + "px";
+    fragment.style.height = random(2, 50) + "px";
+
+    document.body.appendChild(fragment);
+
+    setTimeout(() => fragment.remove(), random(300, 1500));
+}
+
+function twitchElements() {
+    const candidates = elements();
+    if (!candidates.length) return;
+
+    for (let i = 0; i < Math.min(4, candidates.length); i++) {
+        const el = pick(candidates);
+
+        el.animate(
+            [
+                { transform: "translate(0,0)" },
+                { transform: `translate(${random(-8,8)}px,${random(-8,8)}px)` },
+                { transform: "translate(0,0)" }
+            ],
+            {
+                duration: random(150, 500),
+                iterations: 1
+            }
+        );
+    }
+}
+
+function startLivingChaos() {
+    let count = 0;
+
+    const chaosInterval = setInterval(() => {
+        count++;
+
+        createChaosMessage();  
+
+        if (Math.random() < 0.7) createFragment();
+        if (Math.random() < 0.6) twitchElements();
+
+        console.log(`[WEB CHAOS] Disturbance ${count}`);
+
+        // Escalate visual activity over time
+        if (count > 10 && Math.random() < 0.3) {
+            document.documentElement.style.filter =
+                `hue-rotate(${random(0,360)}deg)`;
+        }
+
+        if (count >= 20) {
+            clearInterval(chaosInterval);
+        }
+    }, 1800);
+}
+// EFFECT SELECTION SYSTEM
+
+const effectList = document.getElementById("wc-effect-list");
+
+effects.forEach((effect, index) => {
+    const label = document.createElement("label");
+    label.className = "wc-effect-option";
+
+    label.innerHTML = `
+        <input type="checkbox" checked data-effect-index="${index}">
+        <span>${effect.name}</span>
+    `;
+
+    effectList.appendChild(label);
+});
+
+function getEnabledEffects() {
+    const checkboxes = [
+        ...effectList.querySelectorAll("input[type=checkbox]")
+    ];
+
+    return effects.filter((effect, index) =>
+        checkboxes[index]?.checked
+    );
+}
+
+document.getElementById("wc-all").onclick = () => {
+    effectList.querySelectorAll("input").forEach(cb => cb.checked = true);
+};
+
+document.getElementById("wc-none").onclick = () => {
+    effectList.querySelectorAll("input").forEach(cb => cb.checked = false);
+};
+
     const criticalFailure = () => {
         const overlay = document.createElement("div");
         overlay.className = "wc-error-overlay";
