@@ -723,5 +723,6 @@ startCorruption();
 
         panel.remove();
     });
-
+   
 })();
+  
