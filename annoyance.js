@@ -32,7 +32,17 @@
         <option value="4">Total Chaos</option>
     </select>
 </label>
-
+          
+<label>Chaos preset
+    <select id="wc-preset">
+        <option value="CUSTOM">Custom</option>
+        <option value="GLITCHCORE">Glitchcore</option>
+        <option value="NIGHTMARE">Nightmare</option>
+        <option value="BROKEN">Broken Internet</option>
+        <option value="MINIMAL">Minimal Chaos</option>
+        <option value="TOTAL">Everything Everywhere</option>
+    </select>
+</label>
     <div class="wc-selection-title">
         EFFECT SELECTION
         <div class="wc-select-buttons">
@@ -394,6 +404,40 @@
 
 .wc-effect-category summary::marker {
     color: #ff0033;
+}
+    /* CATEGORY COUNTERS */
+
+.wc-category-count {
+    margin-left: auto;
+    margin-right: 8px;
+    color: #888;
+    font-size: 10px;
+}
+
+.wc-category-active {
+    color: #00ff9c !important;
+    border-color: #00ff9c !important;
+}
+
+.wc-category-toggle {
+    background: #111;
+    color: #00ff9c;
+    border: 1px solid #333;
+    padding: 3px 7px;
+    font-size: 9px;
+    font-family: monospace;
+    cursor: pointer;
+}
+
+.wc-category-toggle:hover {
+    background: #00ff9c;
+    color: #000;
+}
+
+.wc-effect-category summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
     `);
 
@@ -969,15 +1013,30 @@ const categories = {
         "ELEMENT DISAPPEARANCE"
     ]
 };
+// CREATE CATEGORY GROUPS
 
-// Create category groups
 Object.entries(categories).forEach(([category, names]) => {
     const group = document.createElement("details");
     group.className = "wc-effect-category";
     group.open = true;
 
     const heading = document.createElement("summary");
-    heading.textContent = category;
+
+    const title = document.createElement("span");
+    title.textContent = category;
+
+    const count = document.createElement("span");
+    count.className = "wc-category-count";
+
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.textContent = "ALL";
+    toggle.className = "wc-category-toggle";
+
+    heading.appendChild(title);
+    heading.appendChild(count);
+    heading.appendChild(toggle);
+
     group.appendChild(heading);
 
     const list = document.createElement("div");
@@ -995,7 +1054,9 @@ Object.entries(categories).forEach(([category, names]) => {
         label.className = "wc-effect-option";
 
         label.innerHTML = `
-            <input type="checkbox" checked data-effect-index="${index}">
+            <input type="checkbox"
+                   checked
+                   data-effect-index="${index}">
             <span>${name}</span>
         `;
 
@@ -1004,6 +1065,41 @@ Object.entries(categories).forEach(([category, names]) => {
 
     group.appendChild(list);
     effectList.appendChild(group);
+
+    const checkboxes = [...list.querySelectorAll("input")];
+
+    function updateCount() {
+        const enabled = checkboxes.filter(cb => cb.checked).length;
+
+        count.textContent = `${enabled}/${checkboxes.length}`;
+
+        toggle.textContent =
+            enabled === checkboxes.length ? "NONE" : "ALL";
+
+        toggle.classList.toggle(
+            "wc-category-active",
+            enabled === checkboxes.length
+        );
+    }
+
+    toggle.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const allEnabled = checkboxes.every(cb => cb.checked);
+
+        checkboxes.forEach(cb => {
+            cb.checked = !allEnabled;
+        });
+
+        updateCount();
+    });
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener("change", updateCount);
+    });
+
+    updateCount();
 });
 
 // Get enabled effects
@@ -1019,17 +1115,19 @@ function getEnabledEffects() {
     );
 }
 
-// Select ALL
+// SELECT ALL
 document.getElementById("wc-all").onclick = () => {
     effectList.querySelectorAll("input").forEach(cb => {
         cb.checked = true;
+        cb.dispatchEvent(new Event("change"));
     });
 };
 
-// Select NONE
+// SELECT NONE
 document.getElementById("wc-none").onclick = () => {
     effectList.querySelectorAll("input").forEach(cb => {
         cb.checked = false;
+        cb.dispatchEvent(new Event("change"));
     });
 };
 
@@ -1102,6 +1200,10 @@ startCorruption();
     });
    
 })();
-   /*<Line For Debug>*/
+
+
+/*debug*/
+
+/*debug*/
 
 
