@@ -23,6 +23,12 @@ This script is a browser userscript that transforms ordinary webpages into visua
 3. Save the script.
 4. Visit a webpage and cause some chaos!
 
+## Installation Video Example
+
+
+https://github.com/user-attachments/assets/722d67a2-e710-4c3f-83d2-1abeb13d809f
+
+
 ## Usage
 
 1. Choose your chaos level.
