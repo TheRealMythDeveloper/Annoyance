@@ -19,7 +19,7 @@ This script is a browser userscript that transforms ordinary webpages into visua
 ## Installation
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/).
-2. Drag the downloaded file into the dashboard.
+2. Download [the file](https://raw.githubusercontent.com/TheRealMythDeveloper/Annoyance/main/annoyance.user.js)
 3. Save the script.
 4. Visit a webpage and cause some chaos!
 
@@ -58,4 +58,4 @@ I tried to figure out how to get it to userscript.. um.. I'm not smart sometimes
 AI was also used to help clean up code at times, sort it to proper indents and stuff.
 It also added comments when it did that but I didn't remove them. I guess if you want to edit this, go ahead and use those!
 
-That's all!
+That's all!    
