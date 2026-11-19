@@ -23,7 +23,9 @@ This script is a browser userscript that transforms ordinary webpages into visua
 3. Save the script.
 4. Visit a webpage and cause some chaos!
 
-## Installation Video Example
+OR go here! [Greasy Fork](https://greasyfork.org/en/scripts/606303-web-chaos)
+
+## Installation Video Example - For manual.
 
 
 https://github.com/user-attachments/assets/722d67a2-e710-4c3f-83d2-1abeb13d809f
