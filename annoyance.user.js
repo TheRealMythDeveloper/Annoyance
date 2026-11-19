@@ -1,4 +1,3 @@
-
 // ==UserScript==
 // @name         WEB CHAOS
 // @namespace    MythosStudios
@@ -8,7 +7,7 @@
 // @grant        GM_addStyle
 // @run-at       document-idle
 // ==/UserScript==
- 
+
 (() => {
     if (window.top !== window.self) return;
     if (document.getElementById("web-chaos-panel")) return;
@@ -16,57 +15,35 @@
     panel.id = "web-chaos-panel";
 
   panel.innerHTML = `
-    <div class="wc-header">
-        <span>⚠ WEB CHAOS</span>
-        <span class="wc-version">v3.0</span>
+    <div class="wc-toolbar">
+        <div class="wc-header"><span>⚠ WEB CHAOS</span><span class="wc-version">v3.1</span></div>
+        <div class="wc-status">SYSTEM STABLE</div>
+        <label class="wc-inline-control">Level
+            <select id="wc-level">
+                <option value="1">Mild</option>
+                <option value="2" selected>Unstable</option>
+                <option value="3">Severe</option>
+                <option value="4">Total Chaos</option>
+            </select>
+        </label>
+        <label class="wc-inline-control">Preset
+            <select id="wc-preset">
+                <option value="CUSTOM">Custom</option>
+                <option value="GLITCHCORE">Glitchcore</option>
+                <option value="NIGHTMARE">Nightmare</option>
+                <option value="BROKEN">Broken Internet</option>
+                <option value="MINIMAL">Minimal Chaos</option>
+                <option value="TOTAL">Everything Everywhere</option>
+            </select>
+        </label>
+        <button id="wc-select-toggle" type="button">SELECT</button>
+        <details id="wc-filter-menu"><summary>FILTERS</summary><div id="wc-effect-list"></div></details>
+        <label class="wc-toggle"><input type="checkbox" id="wc-progressive" checked> Progressive</label>
+        <label class="wc-toggle"><input type="checkbox" id="wc-living" checked> Living</label>
+        <button id="wc-trigger">INJECT CHAOS</button>
+        <button id="wc-hide" type="button">HIDE</button>
     </div>
-
-    <div class="wc-status">SYSTEM STABLE</div>
-
-    <label>Chaos level
-    <select id="wc-level">
-        <option value="1">Mild</option>
-        <option value="2" selected>Unstable</option>
-        <option value="3">Severe</option>
-        <option value="4">Total Chaos</option>
-    </select>
-</label>
-          
-<label>Chaos preset
-    <select id="wc-preset">
-        <option value="CUSTOM">Custom</option>
-        <option value="GLITCHCORE">Glitchcore</option>
-        <option value="NIGHTMARE">Nightmare</option>
-        <option value="BROKEN">Broken Internet</option>
-        <option value="MINIMAL">Minimal Chaos</option>
-        <option value="TOTAL">Everything Everywhere</option>
-    </select>
-</label>
-    <div class="wc-selection-title">
-        EFFECT SELECTION
-        <div class="wc-select-buttons">
-            <button id="wc-all">ALL</button>
-            <button id="wc-none">NONE</button>
-        </div>
-    </div>
-
-    <div id="wc-effect-list"></div>
-
-    <label class="wc-toggle">
-        <input type="checkbox" id="wc-progressive" checked>
-        Progressive corruption
-    </label>
-
-    <label class="wc-toggle">
-        <input type="checkbox" id="wc-living" checked>
-        Living chaos
-    </label>
-
-    <button id="wc-trigger">INJECT CHAOS</button>
-
-    <div class="wc-footer">
-        NO UNDO AVAILABLE
-    </div>
+    <button id="wc-show" type="button" style="display:none">WEB CHAOS +</button>
 `;
 
     document.body.appendChild(panel);
@@ -253,7 +230,7 @@
             background: rgba(255,0,0,.08);
             animation: wc-blink .2s infinite;
         }
-  
+
         .wc-error-overlay {
             position: fixed;
             inset: 0;
@@ -437,6 +414,31 @@
     align-items: center;
     gap: 6px;
 }
+
+        /* COMPACT TOP BAR REDESIGN */
+        #web-chaos-panel {
+            top: 8px !important; left: 8px !important; right: 8px !important;
+            width: auto !important; max-width: calc(100vw - 16px) !important;
+            padding: 8px !important; border-width: 1px !important;
+            box-shadow: 0 0 12px #00ff9c33 !important;
+        }
+        #web-chaos-panel .wc-toolbar {
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        }
+        #web-chaos-panel .wc-header { margin: 0; font-size: 13px; gap: 6px; }
+        #web-chaos-panel .wc-status { margin: 0; padding: 5px 8px; min-width: 95px; }
+                #web-chaos-panel .wc-inline-control { display: flex; align-items: center; gap: 5px; margin: 0; white-space: nowrap; }
+        #web-chaos-panel .wc-inline-control select { display: inline-block; width: auto; margin: 0; padding: 5px; }
+        #wc-select-toggle, #wc-hide, #wc-show { background: #151515; color: #00ff9c; border: 1px solid #00ff9c; padding: 6px 9px; font: bold 11px monospace; cursor: pointer; }
+        #wc-select-toggle:hover, #wc-hide:hover, #wc-show:hover { background: #00ff9c; color: #000; }
+        #wc-filter-menu { position: relative; }
+        #wc-filter-menu > summary { cursor: pointer; border: 1px solid #333; padding: 6px 9px; background: #151515; color: #00ff9c; }
+        #wc-filter-menu[open] #wc-effect-list { position: absolute; top: 100%; left: 0; width: min(420px, 85vw); max-height: 65vh; z-index: 10; background: #111; border: 1px solid #333; padding: 6px; overflow-y: auto; box-shadow: 0 8px 20px #000a; }
+        #web-chaos-panel .wc-toggle { margin: 0 !important; white-space: nowrap; }
+        #wc-trigger { width: auto; padding: 8px 12px; white-space: nowrap; }
+        #web-chaos-panel .wc-footer { display: none; }
+        #wc-show { position: fixed; top: 8px; left: 8px; z-index: 2147483647; }
+        @media (max-width: 650px) { #web-chaos-panel .wc-toolbar { gap: 5px; } #web-chaos-panel .wc-header { width: 100%; } }
     `);
 
     const random = (min, max) =>
@@ -453,11 +455,11 @@
         );
 
     const addOverlay = (className = "") => {
-    const overlay = document.createElement("div");
-    overlay.className = `wc-chaos-overlay ${className}`.trim();
-    document.body.appendChild(overlay);
-    return overlay;
-};
+        const overlay = document.createElement("div");
+        overlay.className = `wc-chaos-overlay ${className}`.trim();
+        document.body.appendChild(overlay);
+        return overlay;
+    };
 
     const effects = [
         {
@@ -466,21 +468,18 @@
                 document.documentElement.style.filter = "invert(1)";
             }
         },
-
         {
             name: "GRAYSCALE",
             run() {
                 document.documentElement.style.filter = "grayscale(1)";
             }
         },
-
         {
             name: "HYPERSATURATION",
             run() {
                 document.documentElement.style.filter = "saturate(5)";
             }
         },
-
         {
             name: "HUE COLLAPSE",
             run() {
@@ -488,7 +487,6 @@
                     `hue-rotate(${random(90, 320)}deg)`;
             }
         },
-
         {
             name: "DEEP FRIED",
             run() {
@@ -496,7 +494,6 @@
                     "contrast(250%) saturate(400%)";
             }
         },
-
         {
             name: "BLUR",
             run() {
@@ -504,21 +501,18 @@
                     `blur(${random(1, 3)}px)`;
             }
         },
-
         {
             name: "BIG MODE",
             run() {
                 document.body.style.zoom = random(110, 140) + "%";
             }
         },
-
         {
             name: "TINY MODE",
             run() {
                 document.body.style.zoom = random(60, 85) + "%";
             }
         },
-
         {
             name: "TYPOGRAPHIC CHAOS",
             run() {
@@ -528,7 +522,6 @@
                     random(5, 20) + "px";
             }
         },
-
         {
             name: "FONT DISASTER",
             run() {
@@ -542,7 +535,6 @@
                     ]);
             }
         },
-
         {
             name: "TEXT SHADOW",
             run() {
@@ -550,7 +542,6 @@
                     `${random(-5,5)}px ${random(-5,5)}px 3px red`;
             }
         },
-
         {
             name: "OUTLINE EVERYTHING",
             run() {
@@ -560,21 +551,18 @@
                 });
             }
         },
-
         {
             name: "EARTHQUAKE",
             run() {
                 document.body.classList.add("wc-shake");
             }
         },
-
         {
             name: "RAINBOW",
             run() {
                 document.documentElement.classList.add("wc-rainbow");
             }
         },
-
         {
             name: "PULSE",
             run() {
@@ -584,7 +572,6 @@
                 });
             }
         },
-
         {
             name: "FLOAT",
             run() {
@@ -594,7 +581,6 @@
                 });
             }
         },
-
         {
             name: "WOBBLE",
             run() {
@@ -604,7 +590,6 @@
                 });
             }
         },
-
         {
             name: "GLITCH",
             run() {
@@ -614,7 +599,6 @@
                 });
             }
         },
-
         {
             name: "BLINK",
             run() {
@@ -624,7 +608,6 @@
                 });
             }
         },
-
         {
             name: "SPIN",
             run() {
@@ -634,7 +617,6 @@
                 });
             }
         },
-
         {
             name: "MISALIGNMENT",
             run() {
@@ -647,7 +629,6 @@
                 });
             }
         },
-
         {
             name: "GRAVITY",
             run() {
@@ -659,14 +640,12 @@
                 });
             }
         },
- 
         {
             name: "MIRROR WORLD",
             run() {
                 document.body.style.transform = "scaleX(-1)";
             }
         },
-
         {
             name: "TILT",
             run() {
@@ -675,7 +654,6 @@
                 document.body.style.transformOrigin = "center center";
             }
         },
-
         {
             name: "SKEW",
             run() {
@@ -683,14 +661,12 @@
                     `skew(${random(-12,12)}deg,${random(-8,8)}deg)`;
             }
         },
-
         {
             name: "REVERSE READING",
             run() {
                 document.body.style.direction = "rtl";
             }
         },
-
         {
             name: "SPACING MELTDOWN",
             run() {
@@ -702,7 +678,6 @@
                 });
             }
         },
-
         {
             name: "BORDER EXPLOSION",
             run() {
@@ -714,21 +689,18 @@
                 });
             }
         },
-
         {
             name: "SCANLINES",
             run() {
                 addOverlay("wc-scanlines");
             }
         },
-
         {
             name: "SCREEN FLASH",
             run() {
                 addOverlay("wc-flash");
             }
         },
-
         {
             name: "ELEMENT DISAPPEARANCE",
             run() {
@@ -738,7 +710,6 @@
                 });
             }
         },
-
         {
             name: "RANDOM SIZING",
             run() {
@@ -750,7 +721,6 @@
                 });
             }
         },
-
         {
             name: "LOW QUALITY REALITY",
             run() {
@@ -759,7 +729,6 @@
                 document.body.style.fontFamily = "monospace";
             }
         },
-
         {
             name: "AFTERIMAGE",
             run() {
@@ -771,7 +740,6 @@
                 });
             }
         },
-
         {
             name: "RANDOM ALIGNMENT",
             run() {
@@ -781,7 +749,6 @@
                 });
             }
         },
-
         {
             name: "WINDOW PANIC",
             run() {
@@ -827,8 +794,8 @@ function startCorruption() {
             corruptionStage++;
 
             const available = getEnabledEffects().filter(effect =>
-    corruptionEffects.includes(effect.name)
-);
+                corruptionEffects.includes(effect.name)
+            );
 
             const chosen = [];
 
@@ -858,9 +825,7 @@ function startCorruption() {
 
         }, stage.delay);
     });
-}
-
-// LIVING CHAOS ENGINE
+}// LIVING CHAOS ENGINE
 
 const chaosMessages = [
     "SIGNAL LOST",
@@ -1071,7 +1036,7 @@ Object.entries(categories).forEach(([category, names]) => {
         count.textContent = `${enabled}/${checkboxes.length}`;
 
         toggle.textContent =
-            enabled === checkboxes.length ? "NONE" : "ALL";
+            enabled === checkboxes.length ? "DESELECT" : "SELECT";
 
         toggle.classList.toggle(
             "wc-category-active",
@@ -1080,20 +1045,20 @@ Object.entries(categories).forEach(([category, names]) => {
     }
 
     toggle.addEventListener("click", event => {
-    event.preventDefault();
-    event.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
 
-    const allEnabled = checkboxes.every(cb => cb.checked);
+        const allEnabled = checkboxes.every(cb => cb.checked);
+
+        checkboxes.forEach(cb => {
+            cb.checked = !allEnabled;
+            cb.dispatchEvent(new Event("change"));
+        });
+    });
 
     checkboxes.forEach(cb => {
-        cb.checked = !allEnabled;
-        cb.dispatchEvent(new Event("change"));
+        cb.addEventListener("change", updateCount);
     });
-});
-
-checkboxes.forEach(cb => {
-    cb.addEventListener("change", updateCount);
-});
 
     updateCount();
 });
@@ -1173,21 +1138,35 @@ presetSelect.addEventListener("change", () => {
         applyPreset(presetSelect.value);
     }
 });
-// SELECT ALL
-document.getElementById("wc-all").onclick = () => {
-    effectList.querySelectorAll("input").forEach(cb => {
-        cb.checked = true;
-        cb.dispatchEvent(new Event("change"));
+// SINGLE SELECT / DESELECT FILTER TOGGLE
+const selectToggle = document.getElementById("wc-select-toggle");
+function updateSelectToggle() {
+    const boxes = [...effectList.querySelectorAll("input[data-effect-index]")];
+    const allSelected = boxes.length > 0 && boxes.every(cb => cb.checked);
+    selectToggle.textContent = allSelected ? "DESELECT" : "SELECT";
+}
+selectToggle.addEventListener("click", () => {
+    const boxes = [...effectList.querySelectorAll("input[data-effect-index]")];
+    const allSelected = boxes.length > 0 && boxes.every(cb => cb.checked);
+    boxes.forEach(cb => {
+        cb.checked = !allSelected;
+        cb.dispatchEvent(new Event("change", { bubbles: true }));
     });
-};
+    updateSelectToggle();
+});
+effectList.addEventListener("change", updateSelectToggle);
 
-// SELECT NONE
-document.getElementById("wc-none").onclick = () => {
-    effectList.querySelectorAll("input").forEach(cb => {
-        cb.checked = false;
-        cb.dispatchEvent(new Event("change"));
-    });
-};
+// HIDE / SHOW BAR
+const hideButton = document.getElementById("wc-hide");
+const showButton = document.getElementById("wc-show");
+hideButton.addEventListener("click", () => {
+    panel.style.display = "none";
+    showButton.style.display = "block";
+});
+showButton.addEventListener("click", () => {
+    panel.style.display = "block";
+    showButton.style.display = "none";
+});
 
     const criticalFailure = () => {
         const overlay = document.createElement("div");
@@ -1218,13 +1197,13 @@ document.getElementById("wc-none").onclick = () => {
 
         const enabledEffects = getEnabledEffects();
 
-if (enabledEffects.length === 0) {
-    alert("Select at least one chaos effect.");
-    return;
-}
+        if (enabledEffects.length === 0) {
+            alert("Select at least one chaos effect.");
+            return;
+        }
 
-const shuffled = [...enabledEffects].sort(() => Math.random() - .5);
-const selected = shuffled.slice(0, Math.min(amount, shuffled.length));
+        const shuffled = [...enabledEffects].sort(() => Math.random() - .5);
+        const selected = shuffled.slice(0, Math.min(amount, shuffled.length));
 
         // Rare event: critical failure
         const critical = Math.random() < .04;
@@ -1263,5 +1242,5 @@ if (document.getElementById("wc-living").checked) {
 
         panel.remove();
     });
-   
+
 })();
